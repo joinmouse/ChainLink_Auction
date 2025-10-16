@@ -2,22 +2,24 @@
 
 ChainLink_Auction 是一个基于 Hardhat 框架开发的 NFT 拍卖市场，集成 ChainLink 预言机实现实时价格计算与跨链功能，采用工厂模式管理拍卖，并通过 UUPS 代理模式支持合约升级。
 
+## 项目特点
+
+- 支持 ETH 竞价的 NFT 拍卖功能
+- 基于时间的自动结束机制
+- NFT 托管保证交易安全
+- 实时价格计算与跨链交易（开发中）
+- 可升级的智能合约架构（开发中）
+
 ## 项目初始化
 
 ### 环境搭建
 
 ```bash
-# 创建项目并进入目录
-mkdir chainlink-auction && cd chainlink-auction
-
-# 初始化 npm 项目
-npm init -y
-
 # 安装核心依赖
-npm install --save-dev hardhat
-npm install @openzeppelin/contracts @chainlink/contracts
-npm install --save-dev @nomiclabs/hardhat-ethers ethers hardhat-deploy
-npm install --save-dev @nomicfoundation/hardhat-chai-matchers chai dotenv
+pnpm add -D hardhat
+pnpm add @openzeppelin/contracts @chainlink/contracts
+pnpm add -D @nomiclabs/hardhat-ethers ethers hardhat-deploy
+pnpm add -D @nomicfoundation/hardhat-chai-matchers chai dotenv
 
 # 初始化 Hardhat 项目（选择空配置）
 npx hardhat
@@ -84,10 +86,11 @@ mkdir -p contracts/{nft,auction,factory,proxy,oracle} deploy test/{unit,integrat
   - 实现基础功能：铸造、转移、授权
   - 编写单元测试验证功能正确性
 
-- **拍卖合约开发**
-  - 实现 `Auction.sol` 核心逻辑
-  - 支持功能：创建拍卖、出价（ETH/ERC20）、结束拍卖
+- **拍卖合约开发** ✅
+  - 实现 `NftAuction.sol` 核心逻辑
+  - 支持功能：创建拍卖、ETH出价、结束拍卖
   - 实现资金与 NFT 自动转移逻辑
+  - ERC20代币支持（待开发）
 
 - **工厂模式实现**
   - 开发 `AuctionFactory.sol`
@@ -132,23 +135,70 @@ mkdir -p contracts/{nft,auction,factory,proxy,oracle} deploy test/{unit,integrat
 
 ## 常用命令
 
+### 开发相关命令
+
 ```bash
+# 安装依赖
+pnpm install
+
 # 编译合约
+pnpm run compile
+# 或
 npx hardhat compile
 
 # 运行测试
+pnpm test
+# 或
 npx hardhat test
+```
 
+### 部署相关命令
+
+```bash
 # 部署到 Sepolia 测试网
+pnpm run deploy:sepolia
+# 或
 npx hardhat deploy --network sepolia
 
 # 验证合约（替换为实际地址）
+pnpm run verify:sepolia CONTRACT_ADDRESS
+# 或
 npx hardhat verify --network sepolia CONTRACT_ADDRESS
 
 # 查看部署记录
+pnpm run deploy:sepolia:reset
+# 或
 npx hardhat deploy --network sepolia --reset
 ```
 
+### pnpm 工作区管理
+
+```bash
+# 添加依赖到根目录
+pnpm add -w package-name
+
+# 添加依赖到特定工作区
+pnpm add package-name --filter workspace-name
+```
+
+## 已完成功能
+
+### NFT 拍卖合约 (NftAuction.sol)
+
+- [x] 创建拍卖功能
+  - NFT 托管机制
+  - 起拍价设置
+  - 拍卖时间控制
+- [x] 竞拍功能
+  - ETH 出价支持
+  - 最高出价记录
+  - 出价验证逻辑
+- [x] 拍卖结束功能
+  - 自动结算机制
+  - NFT 转移处理
+  - 资金转移处理
+
 ## 版本历史
 
+- **v0.2.0** (2025.10.16)：完成基础 NFT 拍卖合约开发
 - **v0.1.0**：项目初始化完成，基础架构搭建完毕
