@@ -29,7 +29,7 @@ contract NftAuction {
 
     // -------------------------- 卖家功能 --------------------------
     /**
-     * 功能：创建一个新的NFT拍卖
+     * 功能：创建一个新的NFT拍卖(挂单)
      * 参数：
      * - nftContract：NFT所在的合约地址
      * - tokenId：要拍卖的NFT的ID
@@ -49,5 +49,27 @@ contract NftAuction {
         // 校验：卖家必须是NFT的所有者(防止别人拍卖不属于自己的NFT)
         IERC721 nft = IERC721(nftContract);
         require(nft.ownerOf(tokenId) == msg.sender, "你不是NFT的所有者");
+
+        // 计算拍卖结束时间：开始时间（现在）+ 持续时间
+        uint256 endTime = block.timestamp + duration;
+
+        // 初始化拍卖信息
+        auctions[nextAuctionId] = Auction({
+            seller: msg.sender,
+            startTime: block.timestamp,
+            endTime: endTime,
+            startPrice: startPrice,
+            ended: false,
+            nftContract: nftContract,
+            tokenId: tokenId,
+            highestBidder: address(0), // 初始无出价者
+            highestBid: 0              // 初始无出价
+        });
+
+        // 将NFT从卖家转移到合约（托管，防止卖家中途转走）
+        nft.transferFrom(msg.sender, address(this), tokenId);
+
+        // 拍卖ID自增（下次创建用新ID）
+        nextAuctionId++;
     }
 }
