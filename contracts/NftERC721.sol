@@ -34,20 +34,19 @@ contract NftERC721 is ERC721Enumerable, Ownable {
     }
 
     /** 
-     * @dev 获取指定 token 的元数据 URI
-     * @param tokenId token ID
-     * @return 返回 token 的元数据 URI
-     * @notice 所有 token 共用同一个 URI
-     */
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+    * @dev 获取 token 的元数据 URI
+    * @return 返回 token 的元数据 URI
+    * @notice 所有 token 共用同一个 URI（无需指定 tokenId）
+    */
+    function tokenURI(uint256) public view override returns (string memory) {
         return _tokenURI;
     }
 
     /**
-     * @dev 设置所有 token 的元数据 URI
-     * @param newTokenURI 新的元数据 URI
-     * @notice 只有合约 owner 可以调用此函数
-     */
+    * @dev 设置所有 token 的元数据 URI
+    * @param newTokenURI 新的元数据 URI
+    * @notice 只有合约 owner 可以调用此函数
+    */
     function setTokenURI(string memory newTokenURI) external onlyOwner {
         _tokenURI = newTokenURI;
     }
