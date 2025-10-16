@@ -81,10 +81,10 @@ mkdir -p contracts/{nft,auction,factory,proxy,oracle} deploy test/{unit,integrat
 
 ### 阶段 1：核心合约开发（1-2 周）
 
-- **NFT 合约实现**
-  - 开发 `ChainLinkNFT.sol`（基于 ERC721 标准）
-  - 实现基础功能：铸造、转移、授权
-  - 编写单元测试验证功能正确性
+- **NFT 合约实现** ✅
+  - 开发 `NftERC721.sol`（基于 ERC721 标准，已实现，见 contracts/NFTERC721.sol）
+  - 实现基础功能：铸造（mint）、统一 tokenURI、合约 owner 权限控制
+  - 单元测试：已编写基础测试，更多覆盖待补充
 
 - **拍卖合约开发** ✅
   - 实现 `NftAuction.sol` 核心逻辑
@@ -183,6 +183,14 @@ pnpm add package-name --filter workspace-name
 
 ## 已完成功能
 
+
+### NFT 合约 (NftERC721.sol)
+
+- [x] 支持 ERC721 标准
+- [x] 支持铸造（mint）
+- [x] 合约 owner 权限控制
+- [x] 可设置统一的 tokenURI
+
 ### NFT 拍卖合约 (NftAuction.sol)
 
 - [x] 创建拍卖功能
@@ -200,5 +208,5 @@ pnpm add package-name --filter workspace-name
 
 ## 版本历史
 
-- **v0.2.0** (2025.10.16)：完成基础 NFT 拍卖合约开发
+- **v0.2.0** (2025.10.16)：完成基础 NFT 拍卖合约开发，并新增 NftERC721 合约实现
 - **v0.1.0**：项目初始化完成，基础架构搭建完毕
