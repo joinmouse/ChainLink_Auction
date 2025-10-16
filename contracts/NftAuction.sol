@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity ^0.8.28
+pragma solidity ^0.8.28;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
@@ -11,6 +11,7 @@ contract NftAuction {
         uint256 duration;  // 持续拍卖时间
         uint256 startPrice;  // 起始价格
         uint256 startTime;   // 开始时间
+        uint256 endTime;     // 结束时间
         bool ended;          // 是否结束
         // nft信息
         address nftContract;    // nft合约地址
@@ -42,28 +43,30 @@ contract NftAuction {
         uint256 duration,
         uint256 startPrice
     ) external {
-        require(nftContract != address(0), "NFT合约地址无效");
-        require(duration > 0, "拍卖时间不能为0");
-        require(startPrice > 0, "起始价格不能为0");
+        require(nftContract != address(0), unicode"NFT合约地址无效");
+        require(duration > 0, unicode"拍卖时间不能为0");
+        require(startPrice > 0, unicode"起始价格不能为0");
 
         // 校验：卖家必须是NFT的所有者(防止别人拍卖不属于自己的NFT)
         IERC721 nft = IERC721(nftContract);
-        require(nft.ownerOf(tokenId) == msg.sender, "你不是NFT的所有者");
+        require(nft.ownerOf(tokenId) == msg.sender, unicode"你不是NFT的所有者");
 
         // 计算拍卖结束时间：开始时间（现在）+ 持续时间
         uint256 endTime = block.timestamp + duration;
 
         // 初始化拍卖信息
         auctions[nextAuctionId] = Auction({
-            seller: msg.sender,
-            startTime: block.timestamp,
-            endTime: endTime,
-            startPrice: startPrice,
-            ended: false,
-            nftContract: nftContract,
-            tokenId: tokenId,
-            highestBidder: address(0), // 初始无出价者
-            highestBid: 0              // 初始无出价
+            seller: msg.sender,                  // 1. 卖家
+            duration: duration,                  // 2. 持续时间
+            startPrice: startPrice,              // 3. 起始价格
+            startTime: block.timestamp,          // 4. 开始时间
+            endTime: endTime,                    // 5. 结束时间
+            ended: false,                        // 6. 是否结束
+            nftContract: nftContract,            // 7. NFT合约地址
+            tokenId: tokenId,                    // 8. NFT ID
+            tokenAddress: address(0),            // 9. 代币地址（暂不用设为0）
+            highestBidder: address(0),           // 10. 最高出价者（初始为空）
+            highestBid: 0                        // 11. 最高价格（初始为0）
         });
 
         // 将NFT从卖家转移到合约（托管，防止卖家中途转走）
@@ -83,10 +86,10 @@ contract NftAuction {
         Auction storage auction = auctions[auctionId];
 
         // 简单校验：
-        require(!auction.ended, "拍卖已结束");
-        require(block.timestamp < auction.endTime, "拍卖时间已过");
-        require(msg.value > auction.highestBid, "出价必须高于当前最高价");
-        require(msg.value >= auction.startPrice, "出价不能低于起始价");
+        require(!auction.ended, unicode"拍卖已结束");
+        require(block.timestamp < auction.endTime, unicode"拍卖时间已过");
+        require(msg.value > auction.highestBid, unicode"出价必须高于当前最高价");
+        require(msg.value >= auction.startPrice, unicode"出价不能低于起始价");
 
         // 更新最高出价者和出价
         auction.highestBidder = msg.sender;
@@ -102,8 +105,8 @@ contract NftAuction {
         Auction storage auction = auctions[auctionId];
 
         // 校验：拍卖未结束，且时间已到
-        require(!auction.ended, "拍卖已结束");
-        require(block.timestamp >= auction.endTime, "拍卖时间未到");
+        require(!auction.ended, unicode"拍卖已结束");
+        require(block.timestamp > auction.endTime, unicode"拍卖时间未到");
 
         // 标记拍卖结束
         auction.ended = true;
@@ -111,7 +114,7 @@ contract NftAuction {
         if (auction.highestBidder != address(0)) {   // 情况1：有最高出价者（成交）
             // 1. 给卖家转ETH（拍卖所得）
             (bool success, ) = auction.seller.call{value: auction.highestBid}("");
-            require(success, "转ETH给卖家失败");
+            require(success, unicode"转ETH给卖家失败");
 
             // 2. 给最高出价者转NFT
             IERC721(auction.nftContract).transferFrom(
