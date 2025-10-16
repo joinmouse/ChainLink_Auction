@@ -72,4 +72,62 @@ contract NftAuction {
         // 拍卖ID自增（下次创建用新ID）
         nextAuctionId++;
     }
+
+    // -------------------------- 买家功能 --------------------------
+    /**
+     * 功能：对某个拍卖出价（只能用ETH）
+     * 参数：auctionId：要出价的拍卖ID
+     */
+    function bid(uint256 auctionId) external payable {
+        // 从映射中取出拍卖信息（用storage关键字，修改会同步到映射）
+        Auction storage auction = auctions[auctionId];
+
+        // 简单校验：
+        require(!auction.ended, "拍卖已结束");
+        require(block.timestamp < auction.endTime, "拍卖时间已过");
+        require(msg.value > auction.highestBid, "出价必须高于当前最高价");
+        require(msg.value >= auction.startPrice, "出价不能低于起始价");
+
+        // 更新最高出价者和出价
+        auction.highestBidder = msg.sender;
+        auction.highestBid = msg.value;
+    }
+
+    // -------------------------- 结束拍卖 --------------------------
+    /**
+     * 功能：结束拍卖（任何人都可以调用，只要时间到了）
+     * 参数：auctionId：要结束的拍卖ID
+     */
+    function endAuction(uint256 auctionId) external {
+        Auction storage auction = auctions[auctionId];
+
+        // 校验：拍卖未结束，且时间已到
+        require(!auction.ended, "拍卖已结束");
+        require(block.timestamp >= auction.endTime, "拍卖时间未到");
+
+        // 标记拍卖结束
+        auction.ended = true;
+
+        if (auction.highestBidder != address(0)) {   // 情况1：有最高出价者（成交）
+            // 1. 给卖家转ETH（拍卖所得）
+            (bool success, ) = auction.seller.call{value: auction.highestBid}("");
+            require(success, "转ETH给卖家失败");
+
+            // 2. 给最高出价者转NFT
+            IERC721(auction.nftContract).transferFrom(
+                address(this), 
+                auction.highestBidder, 
+                auction.tokenId
+            );
+        }else {  // 情况2：无出价者（NFT返还卖家）
+            IERC721(auction.nftContract).transferFrom(
+                address(this), 
+                auction.seller, 
+                auction.tokenId
+            );
+        }
+    }
+
+    // 允许合约接收ETH（因为买家出价会转ETH到合约）
+    receive() external payable {}
 }
