@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.28;
 
+// 引入可升级合约核心依赖
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
-contract NftAuction {
+
+contract NftAuction is Initializable, UUPSUpgradeable {
     // 拍卖信息结构体
     struct Auction {
         // 基础信息
@@ -22,11 +26,22 @@ contract NftAuction {
         uint256 highestBid;     // 最高价格
     }
 
+    address public admin;  // 新增管理员，用于控制升级权限
     // 用映射存储所有拍卖：拍卖ID => 拍卖信息
     mapping(uint256 => Auction) public auctions;
     // 记录下一个拍卖的ID（从0开始自增）
-    uint256 public nextAuctionId = 0;
+    uint256 public nextAuctionId;
 
+    // 初始化函数（替代构造函数）
+    function initialize() public initializer {
+        admin = msg.sender;  // 设置合约部署者为管理员
+        nextAuctionId = 0;   // 初始化拍卖ID为0
+    }
+
+    // 实现UUPS升级权限控制（必须重写的函数）
+    function _authorizeUpgrade(address) internal override {
+        require(msg.sender == admin, "Only admin can upgrade"); // 仅管理员可升级
+    }
 
     // -------------------------- 卖家功能 --------------------------
     /**
@@ -134,4 +149,14 @@ contract NftAuction {
 
     // 允许合约接收ETH（因为买家出价会转ETH到合约）
     receive() external payable {}
+
+    // 实现 IERC721Receiver 接口，允许合约接收 ERC721 NFT(必须，否则无法接收NFT)
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes calldata
+    ) external pure returns (bytes4) {
+        return this.onERC721Received.selector;
+    }
 }
