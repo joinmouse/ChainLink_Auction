@@ -79,7 +79,7 @@ mkdir -p contracts/{nft,auction,factory,proxy,oracle} deploy test/{unit,integrat
 
 ## 开发计划
 
-### 阶段 1：核心合约开发（1-2 周）
+### 阶段 1：核心合约开发（已完成）
 
 - **NFT 合约实现** ✅
   - 开发 `NftERC721.sol`（基于 ERC721 标准，已实现，见 contracts/NFTERC721.sol）
@@ -92,12 +92,20 @@ mkdir -p contracts/{nft,auction,factory,proxy,oracle} deploy test/{unit,integrat
   - 实现资金与 NFT 自动转移逻辑
   - ERC20代币支持（待开发）
 
-- **工厂模式实现**
-  - 开发 `AuctionFactory.sol`
-  - 功能：创建拍卖合约实例、管理所有拍卖记录
-  - 实现拍卖索引与状态查询接口
+### 阶段 2：合约升级（已完成）
 
-### 阶段 2：ChainLink 集成（1 周）
+- **代理模式实现** ✅
+  - 基于 UUPS 模式开发可升级架构（已实现于 NftAuction.sol）
+  - 实现拍卖合约的升级逻辑，升级权限由 admin 管理
+  - 升级过程中的数据安全性已验证
+
+- **权限管理** ✅
+  - 添加管理员角色控制机制（admin）
+  - 升级权限保护已实现
+  - 多签验证（待开发）
+  - 已编写升级场景测试用例
+
+### 阶段 3：ChainLink 集成（1 周）
 
 - **价格预言机集成**
   - 开发 `PriceOracle.sol`
@@ -108,18 +116,6 @@ mkdir -p contracts/{nft,auction,factory,proxy,oracle} deploy test/{unit,integrat
   - 集成 ChainLink CCIP 协议
   - 实现 NFT 跨链转移功能
   - 支持跨链出价与结算流程
-
-### 阶段 3：合约升级（1 周）
-
-- **代理模式实现**
-  - 基于 UUPS 模式开发可升级架构
-  - 实现拍卖合约与工厂合约的升级逻辑
-  - 确保升级过程中的数据安全性
-
-- **权限管理**
-  - 添加管理员角色控制机制
-  - 实现升级权限保护与多签验证
-  - 编写升级场景测试用例
 
 ### 阶段 4：测试与部署（1 周）
 
@@ -208,5 +204,6 @@ pnpm add package-name --filter workspace-name
 
 ## 版本历史
 
+- **v0.3.0** (2025.10.18)：完成合约升级功能（UUPS代理模式）、权限管理（admin），拍卖合约支持升级
 - **v0.2.0** (2025.10.16)：完成基础 NFT 拍卖合约开发，并新增 NftERC721 合约实现
-- **v0.1.0**：项目初始化完成，基础架构搭建完毕
+- **v0.1.0** (2025.10.15)：项目初始化完成，基础架构搭建完毕
