@@ -111,20 +111,21 @@ contract NftAuction {
         // 标记拍卖结束
         auction.ended = true;
 
-        if (auction.highestBidder != address(0)) {   // 情况1：有最高出价者（成交）
+        // 情况1：有最高出价者（成交）
+        if (auction.highestBidder != address(0)) {
             // 1. 给卖家转ETH（拍卖所得）
             (bool success, ) = auction.seller.call{value: auction.highestBid}("");
             require(success, unicode"转ETH给卖家失败");
 
             // 2. 给最高出价者转NFT
-            IERC721(auction.nftContract).transferFrom(
+            IERC721(auction.nftContract).safeTransferFrom(
                 address(this), 
                 auction.highestBidder, 
                 auction.tokenId
             );
         }else {  // 情况2：无出价者（NFT返还卖家）
-            IERC721(auction.nftContract).transferFrom(
-                address(this), 
+            IERC721(auction.nftContract).safeTransferFrom(
+                address(this),
                 auction.seller, 
                 auction.tokenId
             );
