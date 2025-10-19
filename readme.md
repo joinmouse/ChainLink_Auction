@@ -16,10 +16,10 @@ ChainLink_Auction 是一个基于 Hardhat 框架开发的 NFT 拍卖市场，集
 
 ```bash
 # 安装核心依赖
-pnpm add -D hardhat
-pnpm add @openzeppelin/contracts @chainlink/contracts
-pnpm add -D @nomiclabs/hardhat-ethers ethers hardhat-deploy
-pnpm add -D @nomicfoundation/hardhat-chai-matchers chai dotenv
+npm install --save-dev hardhat
+npm install @openzeppelin/contracts @chainlink/contracts
+npm install --save-dev @nomiclabs/hardhat-ethers ethers hardhat-deploy
+npm install --save-dev @nomicfoundation/hardhat-chai-matchers chai dotenv
 
 # 初始化 Hardhat 项目（选择空配置）
 npx hardhat
@@ -135,15 +135,15 @@ mkdir -p contracts/{nft,auction,factory,proxy,oracle} deploy test/{unit,integrat
 
 ```bash
 # 安装依赖
-pnpm install
+npm install
 
 # 编译合约
-pnpm run compile
+npm run compile
 # 或
 npx hardhat compile
 
 # 运行测试
-pnpm test
+npm test
 # 或
 npx hardhat test
 ```
@@ -152,29 +152,32 @@ npx hardhat test
 
 ```bash
 # 部署到 Sepolia 测试网
-pnpm run deploy:sepolia
+npm run deploy:sepolia
 # 或
 npx hardhat deploy --network sepolia
 
 # 验证合约（替换为实际地址）
-pnpm run verify:sepolia CONTRACT_ADDRESS
+npm run verify:sepolia CONTRACT_ADDRESS
 # 或
 npx hardhat verify --network sepolia CONTRACT_ADDRESS
 
 # 查看部署记录
-pnpm run deploy:sepolia:reset
+npm run deploy:sepolia:reset
 # 或
 npx hardhat deploy --network sepolia --reset
 ```
 
-### pnpm 工作区管理
+### npm 常用命令
 
 ```bash
-# 添加依赖到根目录
-pnpm add -w package-name
+# 安装全部依赖
+npm install
 
-# 添加依赖到特定工作区
-pnpm add package-name --filter workspace-name
+# 添加依赖
+npm install package-name
+
+# 添加开发依赖
+npm install --save-dev package-name
 ```
 
 ## 已完成功能
