@@ -39,7 +39,7 @@ contract NftAuction is Initializable, UUPSUpgradeable {
     }
 
     // 实现UUPS升级权限控制（必须重写的函数）
-    function _authorizeUpgrade(address) internal override {
+    function _authorizeUpgrade(address) internal view override {
         require(msg.sender == admin, "Only admin can upgrade"); // 仅管理员可升级
     }
 
