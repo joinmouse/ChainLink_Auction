@@ -1,26 +1,26 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("ChainlinkPriceDemo", function () {
+describe("ChainlinkPrice", function () {
   let priceDemo;
   let mockPriceFeed;
   let admin;
   let user;
 
-  // 模拟价格参数（8位小数，Chainlink标准）
-  const DECIMALS = 8; // 价格小数位数
-  const MOCK_PRICE = 1800 * 10**8; // 1800美元（带8位小数）
-
   beforeEach(async function () {
-    console.log("开始部署合约...");
     // 部署Mock价格喂价合约
-    const MockV3AggregatorFactory = await ethers.getContractFactory("MockV3Aggregator");
-    mockPriceFeed = await MockV3AggregatorFactory.deploy(DECIMALS, MOCK_PRICE);
-    await mockPriceFeed.waitForDeployment();
-    // 部署ChainlinkPrice合约
-    const PriceDemo = await ethers.getContractFactory("ChainlinkPrice");
+    const AggregatorFactory = await ethers.getContractFactory("AggreagatorV3");
+    console.log("✅ 获取合约工厂成功", AggregatorFactory);
+    mockPriceFeed = await AggregatorFactory.deploy(1800);
+    console.log("✅ 部署Mock合约成功");
+    console.log("📄 合约地址:", await mockPriceFeed.getAddress());  // 0x5FbDB2315678afecb367f032d93F642f64180aa3
+    console.log("📄 合约地址:", mockPriceFeed.target); // 0x5FbDB2315678afecb367f032d93F642f64180aa3
+   
+    // 部署主合约（使用管理员）
     [admin, user] = await ethers.getSigners();
-    priceDemo = await PriceDemo.deploy();
+    const LocalPriceConsumer = await ethers.getContractFactory("LocalPriceConsumer", admin);
+    console.log("PriceDemo", LocalPriceConsumer)
+    priceDemo = await LocalPriceConsumer.deploy();
     await priceDemo.waitForDeployment();
     console.log("合约部署完成，地址:", await priceDemo.getAddress()); // 地址: 0x5FbDB2315678afecb367f032d93F642f64180aa3
   });
