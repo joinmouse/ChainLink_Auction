@@ -5,7 +5,8 @@ pragma solidity ^0.8.28;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-
+// 引入Chainlink价格接口
+import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
 contract NftAuction is Initializable, UUPSUpgradeable {
     // 拍卖信息结构体
@@ -31,6 +32,8 @@ contract NftAuction is Initializable, UUPSUpgradeable {
     mapping(uint256 => Auction) public auctions;
     // 记录下一个拍卖的ID（从0开始自增）
     uint256 public nextAuctionId;
+    // Chainlink预言机相关 存储代币价格喂价合约: 代币地址 => 价格喂价接口（ETH用address(0)）
+    mapping(address => AggregatorV3Interface) public priceFeeds;
 
     // 初始化函数（替代构造函数）
     function initialize() public initializer {
@@ -41,6 +44,31 @@ contract NftAuction is Initializable, UUPSUpgradeable {
     // 实现UUPS升级权限控制（必须重写的函数）
     function _authorizeUpgrade(address) internal view override {
         require(msg.sender == admin, "Only admin can upgrade"); // 仅管理员可升级
+    }
+
+    // --------- 预言机配置（仅管理员） --------
+    /**
+     * @dev 设置代币的Chainlink价格喂价合约
+     * @param tokenAddress 代币地址（ETH用address(0)）
+     * @param priceFeed 价格喂价合约地址（需从Chainlink文档获取对应网络地址）
+     */
+    function setPriceFeed(address tokenAddress, address priceFeed) external {
+        require(msg.sender == admin, "Only admin can set price feed");
+        priceFeeds[tokenAddress] = AggregatorV3Interface(priceFeed);
+    }
+
+    /**
+     * @dev 获取代币的实时美元价格（Chainlink标准返回，带8位小数）
+     * @param tokenAddress 代币地址（ETH用address(0)）
+     * @return 美元价格（例如1800美元表示为180000000000，含8位小数）
+     */
+    function getTokenPriceUSD(address tokenAddress) public view returns (uint256) {
+        AggregatorV3Interface priceFeed = priceFeeds[tokenAddress];
+        require(address(priceFeed) != address(0), "Price feed not set");
+        
+        (, int256 answer, , , ) = priceFeed.latestRoundData();
+        require(answer > 0, "Invalid price");
+        return uint256(answer);
     }
 
     // -------------------------- 卖家功能 --------------------------
