@@ -14,7 +14,7 @@ contract NftAuction is Initializable, UUPSUpgradeable {
     // 新出价事件：记录拍卖ID、出价人、出价金额
     event BidPlaced(uint256 indexed auctionId, address indexed bidder, uint256 amount);
     // 拍卖结束事件：记录拍卖ID、最终买家、成交价格（若流拍则买家为0地址）
-    event AuctionEnded(uint256 indexed auctionId, address winner, uint256 finalPrice);
+    event AuctionEnded(uint256 indexed auctionId, address winner, uint256 tokeId);
 
     // 拍卖信息结构体
     struct Auction {
@@ -166,7 +166,7 @@ contract NftAuction is Initializable, UUPSUpgradeable {
         auction.ended = true;
 
         address winner = auction.highestBidder;
-        uint256 finalPrice = auction.highestBid;
+        uint256 tokeId = auction.tokenId;
         // 情况1：有最高出价者（成交）
         if (auction.highestBidder != address(0)) {
             // 1. 给卖家转ETH（拍卖所得）
@@ -177,7 +177,7 @@ contract NftAuction is Initializable, UUPSUpgradeable {
             IERC721(auction.nftContract).safeTransferFrom(
                 address(this), 
                 winner,
-                finalPrice
+                tokeId
             );
         }else {  // 情况2：无出价者（NFT返还卖家）
             IERC721(auction.nftContract).safeTransferFrom(
@@ -187,7 +187,7 @@ contract NftAuction is Initializable, UUPSUpgradeable {
             );
         }
         // 触发拍卖结束事件
-        emit AuctionEnded(auctionId, winner, finalPrice);
+        emit AuctionEnded(auctionId, winner, tokeId);
     }
 
     // 允许合约接收ETH（因为买家出价会转ETH到合约）
