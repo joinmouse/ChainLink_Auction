@@ -9,6 +9,13 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
 contract NftAuction is Initializable, UUPSUpgradeable {
+    // 合约中定义事件（参数顺序和类型需与测试匹配）
+    event AuctionCreated(uint256 indexed auctionId, address indexed seller, address nftContract, uint256 tokenId);
+    // 新出价事件：记录拍卖ID、出价人、出价金额
+    event BidPlaced(uint256 indexed auctionId, address indexed bidder, uint256 amount);
+    // 拍卖结束事件：记录拍卖ID、最终买家、成交价格（若流拍则买家为0地址）
+    event AuctionEnded(uint256 indexed auctionId, address winner, uint256 finalPrice);
+
     // 拍卖信息结构体
     struct Auction {
         // 基础信息
@@ -115,6 +122,8 @@ contract NftAuction is Initializable, UUPSUpgradeable {
         // 将NFT从卖家转移到合约（托管，防止卖家中途转走）
         nft.transferFrom(msg.sender, address(this), tokenId);
 
+        emit AuctionCreated(nextAuctionId, msg.sender, nftContract, tokenId);
+
         // 拍卖ID自增（下次创建用新ID）
         nextAuctionId++;
     }
@@ -137,6 +146,8 @@ contract NftAuction is Initializable, UUPSUpgradeable {
         // 更新最高出价者和出价
         auction.highestBidder = msg.sender;
         auction.highestBid = msg.value;
+
+        emit BidPlaced(auctionId, msg.sender, msg.value);
     }
 
     // -------------------------- 结束拍卖 --------------------------
@@ -154,6 +165,8 @@ contract NftAuction is Initializable, UUPSUpgradeable {
         // 标记拍卖结束
         auction.ended = true;
 
+        address winner = auction.highestBidder;
+        uint256 finalPrice = auction.highestBid;
         // 情况1：有最高出价者（成交）
         if (auction.highestBidder != address(0)) {
             // 1. 给卖家转ETH（拍卖所得）
@@ -163,8 +176,8 @@ contract NftAuction is Initializable, UUPSUpgradeable {
             // 2. 给最高出价者转NFT
             IERC721(auction.nftContract).safeTransferFrom(
                 address(this), 
-                auction.highestBidder, 
-                auction.tokenId
+                winner,
+                finalPrice
             );
         }else {  // 情况2：无出价者（NFT返还卖家）
             IERC721(auction.nftContract).safeTransferFrom(
@@ -173,6 +186,8 @@ contract NftAuction is Initializable, UUPSUpgradeable {
                 auction.tokenId
             );
         }
+        // 触发拍卖结束事件
+        emit AuctionEnded(auctionId, winner, finalPrice);
     }
 
     // 允许合约接收ETH（因为买家出价会转ETH到合约）

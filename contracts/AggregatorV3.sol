@@ -3,7 +3,7 @@ pragma solidity ^0.8.17;
 
 import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
-contract AggreagatorV3 is AggregatorV3Interface {
+contract AggregatorV3 is AggregatorV3Interface {
     int256 answer;
     
     constructor(int256 _answer) {
