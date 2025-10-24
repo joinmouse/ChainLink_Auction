@@ -19,7 +19,6 @@ ChainLink_Auction 是一个基于 Hardhat 框架开发的 NFT 拍卖市场，集
 npm install --save-dev hardhat
 npm install @openzeppelin/contracts @chainlink/contracts
 npm install --save-dev @nomiclabs/hardhat-ethers ethers hardhat-deploy
-npm install --save-dev @nomicfoundation/hardhat-chai-matchers chai dotenv
 
 # 初始化 Hardhat 项目（选择空配置）
 npx hardhat
@@ -31,50 +30,7 @@ npx hardhat
 
 ```env
 PRIVATE_KEY=your_wallet_private_key
-SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/your_infura_api_key
-ETHERSCAN_API_KEY=your_etherscan_api_key
-```
-
-配置 `hardhat.config.js`：
-
-```javascript
-require("@nomiclabs/hardhat-ethers");
-require("hardhat-deploy");
-require("@nomicfoundation/hardhat-chai-matchers");
-require("dotenv").config();
-
-module.exports = {
-  solidity: {
-    version: "0.8.19",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200
-      }
-    }
-  },
-  networks: {
-    sepolia: {
-      url: process.env.SEPOLIA_RPC_URL,
-      accounts: [process.env.PRIVATE_KEY],
-      chainId: 11155111
-    }
-  },
-  etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY
-  },
-  namedAccounts: {
-    deployer: {
-      default: 0 // 默认使用第一个账户作为部署者
-    }
-  }
-};
-```
-
-### 创建基础目录结构
-
-```bash
-mkdir -p contracts/{nft,auction,factory,proxy,oracle} deploy test/{unit,integration} docs
+ALCHEMY_API_KEY=your_alchemy_api_key
 ```
 
 ## 开发计划
@@ -122,7 +78,7 @@ mkdir -p contracts/{nft,auction,factory,proxy,oracle} deploy test/{unit,integrat
   - 部署合约到 Sepolia 测试网
   - 验证合约并记录部署地址
 
-- **部署合约地址**
+- **部署合约地址**✅
   - NftERC721 部署地址： 0x1F761a7F0cEE38d4Df3729ec572De0fD0Edd4A96
   - NftAuction 代理合约地址： 0xE9DFB2D2a7feb671503ED09C988b4421D677D32c
   - NftAuction 实现合约地址： 0x3f198f869805B216edD543E34E196db3fF2F4d71
@@ -151,18 +107,6 @@ npx hardhat test
 ```bash
 # 部署到 Sepolia 测试网
 npm run deploy:sepolia
-# 或
-npx hardhat deploy --network sepolia
-
-# 验证合约（替换为实际地址）
-npm run verify:sepolia CONTRACT_ADDRESS
-# 或
-npx hardhat verify --network sepolia CONTRACT_ADDRESS
-
-# 查看部署记录
-npm run deploy:sepolia:reset
-# 或
-npx hardhat deploy --network sepolia --reset
 ```
 
 ## 合约
@@ -217,8 +161,9 @@ npx hardhat deploy --network sepolia --reset
 
 ## 版本历史
 
+- **v1.0.0** (2025.10.24)：新增部署脚本`script/deploy-testnet,js`将合约顺利部署到Sepolia 测试网, 完成上线和验证
 - **v0.5.0** (2025.10.23)：合约引入预言机（ChainLink），支持拍卖过程中实时动态的获取eth的价格, 完善nftAuction合约的测试
 - **v0.4.0** (2025.10.19)：新增合约升级的单元测试代码（UUPS代理模式），Hardhat从v3切换到v2(v3不支持@openzeppelin/hardhat-upgrades)
 - **v0.3.0** (2025.10.18)：完成合约升级功能（UUPS代理模式）、权限管理（admin），拍卖合约支持升级
 - **v0.2.0** (2025.10.16)：完成基础 NFT 拍卖合约开发，并新增 NftERC721 合约实现
-- **v0.1.0** (2025.10.15)：项目初始化完成，基础架构搭建
+- **v0.1.0** (2025.10.15)：项目初始化完成，使用hardhat进行基础架构搭建
