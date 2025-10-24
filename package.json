@@ -9,5 +9,8 @@
     "@chainlink/contracts": "^1.5.0",
     "@openzeppelin/contracts": "^5.4.0",
     "@openzeppelin/contracts-upgradeable": "^5.4.0"
+  },
+  "scripts": {
+    "deploy": "node --env-file .env $(which hardhat) run scripts/deploy-testnet.js --network sepolia"
   }
 }

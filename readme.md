@@ -110,17 +110,22 @@ mkdir -p contracts/{nft,auction,factory,proxy,oracle} deploy test/{unit,integrat
   - `NftAuction.sol`接入 ChainLink FeedData 获取价格数据
   - 增加合约测试`test/nft_auction.js`
 
-### 阶段 4：测试与部署（1 周）
+### 阶段 4：测试与部署（已完成）
 
-- **全面测试**
+- **全面测试**✅
   - 完成单元测试（覆盖核心功能点）
   - 编写集成测试（验证完整业务流程）
   - 进行边界测试与安全测试
 
-- **部署上线**
+- **部署上线**✅
   - 编写自动化部署脚本
   - 部署合约到 Sepolia 测试网
   - 验证合约并记录部署地址
+
+- **部署合约地址**
+  - NftERC721 部署地址： 0x1F761a7F0cEE38d4Df3729ec572De0fD0Edd4A96
+  - NftAuction 代理合约地址： 0xE9DFB2D2a7feb671503ED09C988b4421D677D32c
+  - NftAuction 实现合约地址： 0x3f198f869805B216edD543E34E196db3fF2F4d71
 
 ## 常用命令
 
