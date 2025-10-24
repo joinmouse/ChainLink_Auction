@@ -1,14 +1,14 @@
 # ChainLink_Auction - NFT 跨链拍卖市场
 
-ChainLink_Auction 是一个基于 Hardhat 框架开发的 NFT 拍卖市场，集成 ChainLink 预言机实现实时价格计算与跨链功能，采用工厂模式管理拍卖，并通过 UUPS 代理模式支持合约升级。
+ChainLink_Auction 是一个基于 Hardhat 框架开发的 NFT 拍卖市场，集成 ChainLink 预言机实现实时价格计算与跨链功能，采用工厂模式管理拍卖，
+并通过 UUPS 代理模式支持合约升级。
 
 ## 项目特点
 
 - 支持 ETH 竞价的 NFT 拍卖功能
 - 基于时间的自动结束机制
 - NFT 托管保证交易安全
-- 实时价格计算与跨链交易（开发中）
-- 可升级的智能合约架构（开发中）
+- 可升级的智能合约架构
 
 ## 项目初始化
 
