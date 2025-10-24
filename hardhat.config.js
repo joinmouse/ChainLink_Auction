@@ -3,9 +3,8 @@ require("@openzeppelin/hardhat-upgrades")
 
 // 部署钱包的私钥（从 MetaMask 导出，仅用于测试网，勿用于主网）
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
-// Alchemy/Infura API Key（用于连接测试网节点，二选一即可）
+// Alchemy API Key（用于连接测试网节点，二选一即可）
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
-// const INFURA_API_KEY = process.env.INFURA_API_KEY;
 
 module.exports = {
   solidity: {
