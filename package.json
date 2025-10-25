@@ -11,6 +11,7 @@
     "@openzeppelin/contracts-upgradeable": "^5.4.0"
   },
   "scripts": {
-    "deploy:sepolia": "node --env-file .env $(which hardhat) run scripts/deploy-testnet.js --network sepolia"
+    "deploy:sepolia": "node --env-file .env $(which hardhat) run scripts/deploy-testnet.js --network sepolia",
+    "verify:nft": "node --env-file .env $(which hardhat) verify --network sepolia 0x1F761a7F0cEE38d4Df3729ec572De0fD0Edd4A96"
   }
 }

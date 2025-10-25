@@ -22,9 +22,13 @@ module.exports = {
     // Sepolia 测试网（核心配置）
     sepolia: {
       url: `https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`, // Alchemy 节点
-      accounts: [PRIVATE_KEY], // 部署用的钱包账号
+      // accounts: [PRIVATE_KEY], // 部署用的钱包账号
+      accounts: [], // 临时改成空数组，跳过私钥校验
       gas: 2100000, // 可选，设置 Gas 上限
       gasPrice: 8000000000 // 可选，设置 Gas 价格（8 Gwei）
     }
-  }
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY, // 关联 Etherscan API
+  },
 };
