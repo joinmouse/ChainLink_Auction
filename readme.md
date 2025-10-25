@@ -76,7 +76,7 @@ ALCHEMY_API_KEY=your_alchemy_api_key
 - **部署上线**✅
   - 编写自动化部署脚本
   - 部署合约到 Sepolia 测试网
-  - 验证合约并记录部署地址
+  - 验证合约并记录部署地址(可以在Sepolia网络查看合约)
 
 - **部署合约地址**✅
   - NftERC721 部署地址： 0x1F761a7F0cEE38d4Df3729ec572De0fD0Edd4A96
@@ -161,7 +161,8 @@ npm run deploy:sepolia
 
 ## 版本历史
 
-- **v1.0.0** (2025.10.24)：新增部署脚本`script/deploy-testnet,js`将合约顺利部署到Sepolia 测试网, 完成上线和验证
+- **v1.0.1** (2025.10.25)：新增verify脚本配置, 合约上线后完成对合约的验证
+- **v1.0.0** (2025.10.24)：新增部署脚本`script/deploy-testnet,js`将合约顺利部署到Sepolia 测试网, 完成合约上线
 - **v0.5.0** (2025.10.23)：合约引入预言机（ChainLink），支持拍卖过程中实时动态的获取eth的价格, 完善nftAuction合约的测试
 - **v0.4.0** (2025.10.19)：新增合约升级的单元测试代码（UUPS代理模式），Hardhat从v3切换到v2(v3不支持@openzeppelin/hardhat-upgrades)
 - **v0.3.0** (2025.10.18)：完成合约升级功能（UUPS代理模式）、权限管理（admin），拍卖合约支持升级
